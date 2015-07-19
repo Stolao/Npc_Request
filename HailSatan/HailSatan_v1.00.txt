@@ -1,0 +1,69 @@
+//===== EinherjarRO Scripts ================================== 
+//= Custom_Functions
+//===== By: ================================================== 
+//= Stolao
+//===== Request Info =========================================
+//= Hades03 - https://rathena.org/board/user/1171-hades03/
+//= Thread  - https://rathena.org/board/topic/102560-satan/
+//===== Current Version: ===================================== 
+//= 1.00
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//===== Description: ========================================= 
+//= Satan Morroc Invasion
+//===== Comments: ============================================
+//= Optmize
+//===== Additional Comments: =================================
+//= 1.00 Original Make
+//===== Contact Ifo: =========================================
+//= [Stolao] 
+//= Email: Taingram11@gmail.com
+//============================================================
+
+alb2trea,1,1,1	script	HailSatan	111,{
+OnWhisperGlobal:
+	if (!.Status)
+		message strcharinfo(0),"There is no event at the moment!";
+	else {
+		message strcharinfo(0),"There are "+.Spawn+" "+getmonsterinfo(.MobID,0)+" left in "+.Map$+"!";
+		message strcharinfo(0),"Find and kill the "+getmonsterinfo(.MobID,0)+" to gain "+getitemname(.Prize)+"!";
+	}
+	if (.Status || getgmlevel() < .GM) end;
+	message strcharinfo(0),"Start the event?";
+	next;
+	if(select("- No:- Yes") == 1) close;
+	donpcevent strnpcinfo(0)+"::OnStart";
+	message strcharinfo(0),"Event started!";
+	close;
+
+OnMvpDead:
+	set .Spawn, .Spawn - 1;
+	getitem .Prize, .Amount;
+	if (.Spawn) announce "[ "+strcharinfo(0)+" ] has killed a "+getmonsterinfo(.MobID,0)+". There are now "+.Spawn+" "+getmonsterinfo(.MobID,0)+"(s) left.",bc_map;
+	else {
+		getitem .Prize, .LastBonus;
+		announce "The Event has ended. All "+getmonsterinfo(.MobID,0)+" have been killed.",0;
+		set .Status,0;
+	}
+	end;
+OnStart:
+	if (.Status) end;
+	set .Status,1;
+	set .Spawn,.MobQ;
+	killmonster .Map$,"All";
+	monster .Map$,0,0,"Please don't kill me!",1084,.Spawn,strnpcinfo(0)+"::OnMobKilled";
+	announce "Total of "+.Spawn+" "+getmonsterinfo(.MobID,0)+" have been spawned in "+.Map$+"!",0;
+	sleep 2500;
+	announce "Every "+getmonsterinfo(.MobID,0)+" you kill will give you "+getitemname(.Prize)+"!",0;
+	end;
+OnInit:
+	set .Prize,512;		// Reward item ID
+	set .Amount,10;		// Reward item amount
+	set .LastBonus,5;	// Bonus ammount for last kill
+	set .GM,60;		// GM level required to access NPC
+	set .Map$,"alb2trea";	// Map
+	set .MobID,1916;	// Mob ID
+	set .MobQ,5;		// Spawn Ammount
+
+	bindatcmd("hailsatan","HailSatan::OnWhisperGlobal",.GM,99);
+}
