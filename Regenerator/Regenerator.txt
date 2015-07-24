@@ -1,3 +1,24 @@
+//===== EinherjarRO Scripts ================================== 
+//= Regenerator
+//===== By: ================================================== 
+//= Stolao
+//===== Request Info =========================================
+//= Hades03 - https://rathena.org/board/user/29838-kurosuki/
+//= Thread  - https://rathena.org/board/topic/102607-campfire-bard/
+//===== Current Version: ===================================== 
+//= 1.00
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//===== Description: ========================================= 
+//= Recive Increaced regeneration in a certain area
+//===== Comments: ============================================
+//= Optmize
+//===== Additional Comments: =================================
+//= 1.00 Original Make
+//===== Contact Ifo: =========================================
+//= [Stolao] 
+//= Email: Taingram11@gmail.com
+//============================================================
 prontera,100,100,5	script	Regenerator	139,8,11,{
 end;
 OnTouch:
