@@ -1,0 +1,35 @@
+//===== EinherjarRO Scripts ================================== 
+//= sc_server
+//===== By: ================================================== 
+//= Stolao
+//===== Request Info =========================================
+//= Hades03 - https://rathena.org/board/user/463-rage/
+//= Thread  - https://rathena.org/board/topic/102994-sc-start-on-all-characters/
+//===== Current Version: ===================================== 
+//= 1.00
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//===== Description: ========================================= 
+//= start an SC fo all players on server and all that login
+//===== Comments: ============================================
+//= Optmize
+//===== Additional Comments: =================================
+//= 1.00 Original Make
+//===== Contact Ifo: =========================================
+//= [Stolao] 
+//= Email: Taingram11@gmail.com
+//============================================================
+-	script	sc_server	-1,{
+OnHour18:
+	SC_Enable = 1;
+	addrid(0);
+	sc_start SC_SUMMER,-1,0;
+end;
+OnHour20:
+	SC_Enable = 0;
+	addrid(0);
+	sc_end SC_SUMMER;
+end;
+OnPCLoginEvent:
+	if(SC_Enable) sc_start SC_SUMMER,-1,0;
+}
