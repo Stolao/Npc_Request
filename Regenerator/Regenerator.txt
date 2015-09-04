@@ -1,0 +1,44 @@
+//===== EinherjarRO Scripts ================================== 
+//= Regenerator
+//===== By: ================================================== 
+//= Stolao
+//===== Request Info =========================================
+//= Hades03 - https://rathena.org/board/user/29838-kurosuki/
+//= Thread  - https://rathena.org/board/topic/102607-campfire-bard/
+//===== Current Version: ===================================== 
+//= 1.00
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//===== Description: ========================================= 
+//= Recive Increaced regeneration in a certain area
+//===== Comments: ============================================
+//= Optmize
+//===== Additional Comments: =================================
+//= 1.00 Original Make
+//===== Contact Ifo: =========================================
+//= [Stolao] 
+//= Email: Taingram11@gmail.com
+//============================================================
+prontera,100,100,5	script	Regenerator	139,8,11,{
+end;
+OnTouch:
+	dispbottom "Stay here to regenerate faster.";
+	attachnpctimer();
+	startnpctimer();
+	end;
+OnTimer60000:
+	getmapxy(.@map$,.@x,.@y,0);
+	if( distance(.x,.y,.@x,.@y)<=11
+	&& .@map$==.map$ ) {
+	specialeffect2 363;
+	sc_start4 SC_REGENERATION,60000,2,2,2,0;
+		attachnpctimer();
+		initnpctimer();
+	} else {
+		dispbottom "You left the area and will no longer receive Increased Regen";
+		stopnpctimer();
+	}
+	end;
+OnInit:
+	getmapxy(.map$,.x,.y,1);
+}
