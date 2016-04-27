@@ -1,0 +1,248 @@
+//===== rAthena Script =======================================
+//= Lottery
+//===== By: ==================================================
+//= acky, [Stolao]
+//===== Current Version: =====================================
+//= 2.01
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Daily lottery draw
+//= Revamped by [Stolao] per request https://rathena.org/board/topic/105495-lottery-npc/
+//===== Additional Comments: =================================
+//= 1.10 Numbers drawn daily (Time is configured line 29)
+//= 1.10 Added GM-Riggability
+//= 1.10 Ability to renew ticket
+//= 1.10 Improved interface
+//= 1.10 Fixed minor bug where first load didn't work.
+//= 1.2A fix due to new script engine
+//= 2.01 Re-Wrote from the ground up [Stolao] (Untested)
+//============================================================
+
+prontera,164,175,4	script	Lottery	76,{
+	mes .M$;
+	mes "Winning Lotto Numbers ("+$LID[2]+"):";
+	mes "^0000FF[" + $LW[1] + "] [" + $LW[2] + "] [" + $LW[3] + "] [" + $LW[4] + "] [" + $LW[5] + "] [" + $LW[6] + "]^000000";
+	if (#LID){
+		mes "Your Ticket ("+#LID+"):";
+		mes "^FF0000[" + #LW[1] + "] [" + #LW[2] + "] [" + #LW[3] + "] [" + #LW[4] + "] [" + #LW[5] + "] [" + #LW[6] + "]^000000";
+	}
+	mes "Next Draw-ID: ^FF0000" + $LID[1] + "^000000.";
+	next;
+	if(getgmlevel() > 90){
+		set .@i,select("Claim Prize:Buy New Ticket:[GM]Do Draw Now:[GM]Rig the Lottery:Cancel");
+	} else {
+		set .@i,select("Claim Prize:Buy New Ticket:::Cancel");
+	}
+	switch(.@i){
+		case 1:
+			if (#LID != $LID[2]){
+				mes .M$;
+				mes "I'm sorry but it appears that you have an invalid ticket.";
+				close;
+			}
+			for(.@i = 1; .@i < 7; .@i++){
+				for(.@u = 1: .@u < 7; .@u++){
+					if(#LW[.@i] == $LW[.@u]) .@P += 1;
+				}
+			}
+			if(.@P){
+				mes .M$;
+				mes "You have matched at least "+.@P+" numbers!";
+				mes "You've won ^0000FF"+.Prizes[.@P * 2]+" " + getitemname(.Prizes[.@P * 2 - 1]) + "^000000.";
+				Announce "Lottery: " + strcharinfo(0) + " has won a prize of "+.Prizes[.@P * 2]+" " + getitemname(.Prizes[.@P * 2 - 1]) + "!",8;
+				set #LID,0;
+				getitem .Prizes[.@P * 2 - 1],.Prizes[.@P * 2];
+				close;
+			} else {
+				mes .M$;
+				mes "Bad luck, it appears you do not hold a winning ticket.";
+				next;
+				mes .M$;
+				mes "Better luck next time!.";
+				close;
+			}
+		case 2:
+			if (#LID == $LID && #LW[1] != 0){
+				mes .M$;
+				mes "It appears that you already have a ticket for today.";
+				mes "You may only purchase one ticket per draw.";
+				close;
+			}
+			mes .M$;
+			mes "Tickets cost ^0000FF"+.Cost[1]+" "+ getitemid(.Cost[0]) + "^000000.";
+			mes "The Prizes are as follows:";
+			mes "[1] ^0000FF"+.Prizes[2]+" " + getitemname(.Prizes[1]) + "^000000.";
+			mes "[2] ^0000FF"+.Prizes[4]+" " + getitemname(.Prizes[3]) + "^000000.";
+			mes "[3] ^0000FF"+.Prizes[6]+" " + getitemname(.Prizes[5]) + "^000000.";
+			mes "[4] ^0000FF"+.Prizes[8]+" " + getitemname(.Prizes[7]) + "^000000.";
+			mes "[5] ^0000FF"+.Prizes[10]+" " + getitemname(.Prizes[9]) + "^000000.";
+			mes "[6] ^0000FF"+.Prizes[12]+" " + getitemname(.Prizes[11]) + "^000000.";
+			next;
+			if(select("Buy Ticket:Cancel") > 1){
+				break;
+			} else if(countitem(.Cost[0]) < .Cost[1]){
+				mes .M$;
+				mes "You can't afford a lottery ticket.";
+				close;
+			} else {
+				mes .M$;
+				mes "Would you like your numbers hand picked or computer generated?";
+				next;
+				switch("Computer Generated:Hand Picked:(Renew Ticket"){
+					case 1:
+						while(!.@x){
+							for(.@i = 1; .@i < 7; .@i++){
+								set .@LW[.@i],rand(1,40);
+							}
+							while(.@LW[2] == .@LW[1]) set .@LW[2],rand(1,40);
+							while(.@LW[3] == .@LW[1] || .@LW[2] == .@LW[3]) set .@LW[3],rand(1,40);
+							while(.@LW[4] == .@LW[1] || .@LW[2] == .@LW[4] || .@LW[4] == .@LW[3]) set .@LW[4],rand(1,40);
+							while(.@LW[5] == .@LW[1] || .@LW[2] == .@LW[5] || .@LW[5] == .@LW[3]] || .@LW[4] == .@LW[5]) set .@LW[5],rand(1,40);
+							while(.@LW[6] == .@LW[1] || .@LW[2] == .@LW[6] || .@LW[6] == .@LW[3]] || .@LW[4] == .@LW[6] || .@LW[6] == .@LW[5]) set .@LW[6],rand(1,40);
+							mes .M$;
+							mes "The computer has selected the following numbers:";
+							mes "^0000FF" + @L1 + " " + @L2 + " " + @L3 + " " + @L4 + " " + @L5 + " " + @L6 + "^000000";
+							next;
+							if(select("Confirm:Re-Generate") == 1) .@x = 1;
+						}
+						copyarray #LW[1],@LW[1],6;
+					break;
+					case 2:
+						while(!.@x){
+							mes .M$;
+							mes "Please pick your numbers (1-40):";
+							mes "Numbers cannot repeat";
+							for(.@i = 1; .@i < 7; .@i++){
+								input @LW[.@i],1,40;
+								mes @LW[.@i]
+							}
+							while(.@LW[2] == .@LW[1]){
+								mes "Re-Enter 2nd Number it repeats";
+								input @LW[2],1,40;
+							}
+							while(.@LW[3] == .@LW[1] || .@LW[2] == .@LW[3]){
+								mes "Re-Enter 3rd Number it repeats";
+								input @LW[3],1,40;
+							}
+							while(.@LW[4] == .@LW[1] || .@LW[2] == .@LW[4] || .@LW[4] == .@LW[3]){
+								mes "Re-Enter 4th Number it repeats";
+								input @LW[4],1,40;
+							}
+							while(.@LW[5] == .@LW[1] || .@LW[2] == .@LW[5] || .@LW[5] == .@LW[3]] || .@LW[4] == .@LW[5]){
+								mes "Re-Enter 5th Number it repeats";
+								input @LW[5],1,40;
+							}
+							while(.@LW[6] == .@LW[1] || .@LW[2] == .@LW[6] || .@LW[6] == .@LW[3]] || .@LW[4] == .@LW[6] || .@LW[6] == .@LW[5]){
+								mes "Re-Enter 6th Number it repeats";
+								input @LW[6],1,40;
+							}
+							next;
+							mes .M$;
+							mes "Your numbers are:";
+							mes "^0000FF" + @L1 + " " + @L2 + " " + @L3 + " " + @L4 + " " + @L5 + " " + @L6 + "^000000";
+							next;
+							if(select("Confirm:Re-Pick") == 1) .@x = 1;
+						}
+						copyarray #LW[1],@LW[1],6;
+					break;
+					case 3:
+						if(!#LID){
+							mes .M$;
+							mes "I'm sorry but it appears that you have an invalid ticket.";
+							close;
+						}
+					break;
+				}
+			}
+				delitem .Cost[0],.Cost[1];
+			set #LID,$LID[1];
+			mes .M$;
+			mes "The live broadcasted draw is at 9pm.";
+			mes "You can claim your ticket between then and the next draw.";
+			next;
+			mes .M$;
+			mes "Good luck!";
+			close;
+		case 3:
+			callsub OnClock2045;
+		break;
+		case 4:
+			while(!.@x){
+				mes .M$;
+				mes "Please pick your numbers (1-40):";
+				mes "Numbers cannot repeat";
+				for(.@i = 1; .@i < 7; .@i++){
+					input @LW[.@i],1,40;
+					mes @LW[.@i]
+				}
+				while(.@LW[2] == .@LW[1]){
+					mes "Re-Enter 2nd Number it repeats";
+					input @LW[2],1,40;
+				}
+				while(.@LW[3] == .@LW[1] || .@LW[2] == .@LW[3]){
+					mes "Re-Enter 3rd Number it repeats";
+					input @LW[3],1,40;
+				}
+				while(.@LW[4] == .@LW[1] || .@LW[2] == .@LW[4] || .@LW[4] == .@LW[3]){
+					mes "Re-Enter 4th Number it repeats";
+					input @LW[4],1,40;
+				}
+				while(.@LW[5] == .@LW[1] || .@LW[2] == .@LW[5] || .@LW[5] == .@LW[3]] || .@LW[4] == .@LW[5]){
+					mes "Re-Enter 5th Number it repeats";
+					input @LW[5],1,40;
+				}
+				while(.@LW[6] == .@LW[1] || .@LW[2] == .@LW[6] || .@LW[6] == .@LW[3]] || .@LW[4] == .@LW[6] || .@LW[6] == .@LW[5]){
+					mes "Re-Enter 6th Number it repeats";
+					input @LW[6],1,40;
+				}
+				next;
+				mes .M$;
+				mes "Your numbers are:";
+				mes "^0000FF" + @L1 + " " + @L2 + " " + @L3 + " " + @L4 + " " + @L5 + " " + @L6 + "^000000";
+				next;
+				if(select("Confirm:Re-Pick") == 1) .@x = 1;
+			}
+			copyarray $LR[1],@LW[1],6;
+			next;
+			mes .M$;
+			mes "Lottery rigged for next draw.";
+			set $LR[0],1;
+			close;
+		case 5:
+	}
+	mes .M$;
+	mes "Come back soon!";
+	close;
+OnClock2045:
+	if ($LR[0]){
+		set $LW[1],$LR[1];
+		set $LW[2],$LR[2];
+		set $LW[3],$LR[3];
+		set $LW[4],$LR[4];
+		set $LW[5],$LR[5];
+		set $LW[6],$LR[6];
+		$LR[0] = 0;
+	} else {
+		for(.@i = 1; .@i < 7; .@i++){
+			set $LW[.@i],rand(1,40);
+		}
+		while($LW[2] == $LW[1]) set $LW[2],rand(1,40);
+		while($LW[3] == $LW[1] || $LW[2] == $LW[3]) set $LW[3],rand(1,40);
+		while($LW[4] == $LW[1] || $LW[2] == $LW[4] || $LW[4] == $LW[3]) set $LW[4],rand(1,40);
+		while($LW[5] == $LW[1] || $LW[2] == $LW[5] || $LW[5] == $LW[3]] || $LW[4] == $LW[5]) set $LW[5],rand(1,40);
+		while($LW[6] == $LW[1] || $LW[2] == $LW[6] || $LW[6] == $LW[3]] || $LW[4] == $LW[6] || $LW[6] == $LW[5]) set $LW[6],rand(1,40);
+	}
+	Announce "Lottery: Welcome to tonight's lotto draw!",8;
+	Announce "The numbers are as follows: [" + $LW[1] + "] [" + $LW[2] + "] [" + $LW[3] + "] [" + $LW[4] + "] [" + $LW[5] + "] [" + $LW[6] + "]",8;
+	Announce "Congratulations to the winners of tonight!",8;
+	if($LID[1] < 100000) $LID[1] += 99999;
+	$LID[2] = $LID[1];
+	$LID[1] += rand(10);
+end;
+OnInit:
+	setarray .Prizes,0,12221,1,7711,1,14232,5,7929,1,7179,2,4399,1;
+	setarray .Cost,7711,20;
+	set .M$,"[Lottery]";
+end;
+}
