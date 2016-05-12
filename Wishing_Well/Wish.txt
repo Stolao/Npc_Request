@@ -1,0 +1,205 @@
+//===== EinherjarRO Scripts ================================== 
+//= Wish Box
+//===== By: ================================================== 
+//= Stolao
+//===== Current Version: ===================================== 
+//= 1.12
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//===== Description: ========================================= 
+//= A wish maiden, players
+//===== Uses: ================================================
+//= Prize roulette for made for Amethy's RO
+//===== Comments: ============================================
+//= [Stolao]
+//= Optimize]
+//= Spell Check
+//= Made Daily only?
+//===== Additional Comments: =================================
+//= 1.00 Origional Make
+//= 1.01 Removed Repeat code
+//= 1.02 Added checkweight
+//= 1.03 Added Item requirement
+//= 1.04 made prizes variables
+//= 1.05 made requirements variables
+//= 1.06 removed dubug mes
+//= 1.07 Fixed checkweight
+//= 1.08 Moved cutin to center
+//= 1.09 Fixed varios bugs
+//= 1.0A Moved close to after wheel stops
+//= 1.0B Added Disable and Enable Commands
+//= 1.0C Moved Delete Item
+//= 1.0D Undid 1.0A
+//= 1.0E Disabled walking while script runs
+//= 1.0F Added Dispbottom for prizes
+//= 1.10 Added 2 Second display of prize wheel at end of scipt
+//= 1.11 Made Cutins Dynamic
+//= 1.12 Converted Script to a Function
+//===== Contact Ifo: =========================================
+//= [Stolao] 
+//= Email: Taingram11@gmail.com
+//============================================================
+
+
+//======================  F_SpinSpin  ========================
+//Format
+//callfunc "F_SpinSpin",Npc Name,Slot Name,Cost,Points,Point Name,Item Ids,Quantities,DeleteItems,Prize Cutins,Item Ids,Quantities,Reward Points,Points,Point Name;
+// 00 - Npc Name
+//	  e.g. "[Wish Maiden]"
+// 01 - Slot Name
+//	  e.g. "Prize Wheel"
+// 02 - Cost
+//	  The required number of "Points"
+// 03 - Points
+//	  What points it checks
+//	  e.g. "Zeny", "CASHPOINTS", "PKPOINTS"
+// 04 - Point Name
+//	  Display name for points
+//	  e.g. "Zeny", "Cash Points", "Pk Points", "M0nieZ"
+// 05 - Item Ids
+//	  Items Required
+//	  "ItemID 1:ItemID 2:ItemID 3:...ItemID 42"
+//	  Supports up to 42 items
+// 06 - Quantities
+//	  Item Quantities Required
+//	  "Item 1:Item 2:Item 3:...Item 42"
+// 07 - DeleteItems
+//	  Toggle  Delete Items Required?
+//	  0: No, 1: Yes
+//	  "Item 1:Item 2:Item 3:...Item 42"
+//	  Tip:
+//	   Put a "" and no items will delete, or Copy 'Item Ids' and all items will delete
+// 08 - Prize Cutins
+//	"Cutin 1:Cutin 2:Cutin 3:...Cutin 42"
+//      Note: The cutin varible cannot be longer then 255 characters else will error
+// 09 - Item Ids
+//	  Items Required
+//	  "ItemID 1:ItemID 2:ItemID 3:...ItemID 42"
+//	  Supports up to 42 items
+// 10 - Quantities
+//	  Item Quantities Required
+//	  "Item 1:Item 2:Item 3:...Item 42"
+// 11 - Reward Points
+//	  The number of "Points" rewarded
+// 12 - Points
+//	  What points it checks
+//	  e.g. "Zeny", "CASHPOINTS", "PKPOINTS"
+// 13 - Point Name
+//	  Display name for points
+//	  e.g. "Zeny", "Cash Points", "Pk Points", "M0nieZ"
+// 14 - Spin Time
+//	  the amount of time between the last 2 rotaions in miliseconds
+//	  Smaller numbers = faster spin
+
+function	script	SpinSpin	{
+	mes getarg(0);
+	mes "Would you like to try the getarg(1)?";
+
+	if(getarg(3)){
+		if(getd(getarg(3)) < getarg(2)){
+			mes "You need "+(getarg(2)-getd(getarg(3)))+" more "+getarg(4)+" to continue.";
+			close;
+		}
+	}
+	If(getarg(5)){
+		Explode .@is,getarg(5,getarg(1)),":";	Explode .@qs,getarg(6,getarg(2)),":";	Explode .@ds,getarg(7,getarg(3)),":";
+		Set .@gas,((getarraysize(.@is)<getarraysize(.@qs))?""+getarraysize(.@is)+"":""+getarraysize(.@qs)+"")-1;
+		Set .@I,0;
+		While(.@I < .@gas){
+			sleep2 5;
+			If(countitem(.@is[.@I]) < .@qs[.@I]){
+				Mes "Sorry you need "+(.@qs[.@I]-countitem(.@is[.@I]))+" more "+getitemname(.@is[.@I])+" to continue.";
+				Close;
+			}
+			Set .@I,.@I+1;
+			}
+	}
+	Explode .@PC$,getarg(8),":";	Explode .@PID,getarg(9),":";	Explode .@PQT,getarg(10),":";
+	Explode .@PRP,getarg(11),":";	Explode .@PT$,getarg(12),":";	Explode .@PN$,getarg(13),":";
+	set .@x,getarraysize(.@PC$);	set .@i, rand(.@x*10,.@x*11-1);	set .@p,.@i%.@x;
+	if(.@PID[.@p] && .@PQT[.@p]){
+		if(!checkweight(.@PID[.@p],.@PQT[.@p] )){
+			next;
+			mes getarg(0);
+			mes "Winning a prize will put you overweight, why dont you lighten up a bit and come back.";
+			close;
+		}
+	} else {
+		close2;
+		disable_command;
+		pcblockmove getcharid(3),1;
+		If(getarg(7){
+			for(set .@d,1; .@d < .@gas); set .@d,.@d+1){
+				sleep2 5;
+				If(.@ds[.@d] != 0) Delitem .@is[.@d],.@qs[.@d];
+			}
+		}
+		if(getarg(2)) setd getarg(3),getd(getarg(3)) - getarg(2);
+		for(set .@e,1; .@e < .@i; set .@e,.@e+1){
+			cutin .@PC$[.@e%.@x],4;
+			sleep2 50+.@e*getarg(14)/.@x;
+		}
+		if(.@PID[.@p]){
+			getitem .@PID[.@p],.@PQT[.@p];
+			dispbottom "Congrats you won "+.@PQT[.@p]+" "+getitemname(.@PID[.@p])+"";
+		} 
+		if(.@PRP[.@p]){
+			setd .@PT$[.@p],getd(.@PT$[.@p]) + .@PRP[.@p]);
+			dispbottom "Congrats you won "+.@PRP[.@p]+" "+.@PN$[.@p]+"";
+		}
+		pcblockmove getcharid(3),0;
+		enable_command;
+		sleep2 2000;
+		cutin "",255;
+	}	
+return;
+}
+
+//============================================================
+
+prontera,149,184,4	script	Wish#001	123,{
+	callfunc "F_SpinSpin","[Wish Maiden]","Prize Wheel",0,"Zeny","Zeny",501,1,1,.Cutins$,.ItemIDs$,.Quanity$,"Zeny",.Points$,"Zeny",900;
+end;
+OnInit:
+	set .@Item,501,0,501,501,501,0,501,0;
+	set .@Qnt,4,0,1,2,1,0,1,0;
+	set .@Zeny,0,100000000,0,0,0,200000000,0,50000000;
+	set .@cutin$,4ptw.bmp,100mw.bmp,refinetw.bmp,2pettw.bmp,scarfbw.bmp,200mw.bmp,refinepw.bmp,50mw.bmp;
+
+	//convert to function format
+	set .ItemIDs$,implode(.Items,:);
+	set .Quanity$,implode(.Qnt,:);
+	set .Points$,implode(.Zeny,:);
+	set .Cutins$,implode(.cutin$,:);
+end;
+}
+
+
+prontera,147,184,4	script	Wish#002	123,{
+	callfunc "F_SpinSpin","[Wish Maiden]","Prize Wheel","0","Zeny","Zeny","501","1","1","4ptw.bmp:100mw.bmp:refinetw.bmp:2pettw.bmp:scarfbw.bmp:200mw.bmp:refinepw.bmp:50mw.bmp","501:0:501:501:501:0:501:0","4:0:1:2:1:0:1:0","Zeny","0:100000000:0:0:0:200000000:0:50000000","Zeny";
+end;
+}
+
+
+prontera,145,184,4	script	Wish#002	123,{
+	callfunc "F_SpinSpin",
+		"[Wish Maiden]",
+		"Prize Wheel",
+		"0",
+		"Zeny"
+		,"Zeny",
+		"501",
+		"1",
+		"1",
+		"4ptw.bmp:100mw.bmp:refinetw.bmp:2pettw.bmp:scarfbw.bmp:200mw.bmp:refinepw.bmp:50mw.bmp",
+		"501:0:501:501:501:0:501:0",
+		"4:0:1:2:1:0:1:0",
+		"Zeny",
+		"0:100000000:0:0:0:200000000:0:50000000",
+		"Zeny";
+end;
+}
+
+
+
+
