@@ -1,0 +1,91 @@
+-	script	RefineBonus	-1,{
+OnPCStatCalcEvent:
+	for(.@i = 0; .@i < 10; .@i++){
+		if(getequipisequiped(.@i){
+			.@id = getequipuniqueid(.@i);
+			for(.@a = .@i; .@a > 0; .@a--){
+				if(getiteminfo(.@id,10) & (2 << .@i)) break;
+			}
+			switch(getequipweaponlv(.@i)){
+				case 0: //Armor
+					switch(getequiprefinerycnt(.@i)){
+						case 0:	break;
+						case 1:	break;
+						case 2:	break;
+						case 3:	break;
+						case 4:	break;
+						case 5:	break;
+						case 6:	break;
+						case 7:	break;
+						case 8:	break;
+						case 9:	break;
+						case 10:	break;
+					}
+				break;
+				case 1: //Wlvl 1
+					switch(getequiprefinerycnt(.@i)){
+						case 0:	break;
+						case 1:	break;
+						case 2:	break;
+						case 3:	break;
+						case 4:	break;
+						case 5:	break;
+						case 6:	break;
+						case 7:	break;
+						case 8:	break;
+						case 9:	break;
+						case 10:	break;
+					}
+				break;
+				case 2: //Wlvl 2
+					switch(getequiprefinerycnt(.@i)){
+						case 0:	break;
+						case 1:	break;
+						case 2:	break;
+						case 3:	break;
+						case 4:	break;
+						case 5:	break;
+						case 6:	break;
+						case 7:	break;
+						case 8:	break;
+						case 9:	break;
+						case 10:	break;
+					}
+				break;
+				case 3: //Wlvl 3
+					switch(getequiprefinerycnt(.@i)){
+						case 0:	break;
+						case 1:	break;
+						case 2:	break;
+						case 3:	break;
+						case 4:	break;
+						case 5:	break;
+						case 6:	break;
+						case 7:	break;
+						case 8:	break;
+						case 9:	break;
+						case 10:	break;
+					}
+				break;
+				case 4: //Wlvl 4
+					switch(getequiprefinerycnt(.@i)){
+						case 0:	break;
+						case 1:	break;
+						case 2:	break;
+						case 3:	break;
+						case 4:	break;
+						case 5:	break;
+						case 6:	break;
+						case 7:	break;
+						case 8:	break;
+						case 9:	break;
+						case 10:	break;
+					}
+				break;
+			}
+		}
+	}
+}
+
+
+

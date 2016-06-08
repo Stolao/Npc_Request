@@ -1,0 +1,19 @@
+//===== EinherjarRO Scripts ================================== 
+//= Job Scroll
+//===== By: ================================================== 
+//= Stolao
+//===== Current Version: ===================================== 
+//= 1.07
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//===== Description: ========================================= 
+//= Job Scroll is a highly dynamic, job changing scroll
+//=	it will change to any jobs added to list
+//=	it will then reward levels and skillpoints based off
+//=	the config as well as grant items based of a highly
+//=	dynamic setup, up to 60,129,542,116 differant item
+//=	possibilies
+//===== Contact Ifo: =========================================
+//= [Stolao] 
+//= Email: Taingram11@gmail.com
+//============================================================
