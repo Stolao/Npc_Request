@@ -67,5 +67,5 @@ OnInit:
 	// Toggle
 	//   1 = On
 	//   0 = Off
-	.Link = 1
+	.Link = 1;
 }
