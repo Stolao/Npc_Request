@@ -5,6 +5,7 @@
 //===== Current Version: =====================================================
 //= 1.0
 //= 1.1 Converted to rA [Stolao]
+//= 1.2 Added Itemlink Support
 //===== Description: =========================================================
 //= Rotates each month. January (Capricorn) to December (Sagittarius)
 //= Counts and displays required items and how much you miss
@@ -14,12 +15,13 @@ prontera,155,181,5	script	Zodiac#hats	4_F_PINKWOMAN,{
 	function Zodiac;
 	mes "[Zodiac of the Month]";
 	mes "Hello there, I am in charge of the Zodiac items. Please select which Zodiac item you are interested in.";
-	if (select("Zodiac Diadem:Zodiac Crown") == 1) {
-		setarray .Zodiac, 5745, 5512, 5514, 5545, 5549, 5569, 5581, 5589, 5599, 5663, 5677, 5740;
-	} else	setarray .Zodiac, 5744, 5513, 5515, 5546, 5550, 5570, 5582, 5588, 5598, 5662, 5676, 5739;
+	.@Z = select("Zodiac Diadem:Zodiac Crown");
+	if(.@Z == 1)	setarray .Zodiac, 5745, 5512, 5514, 5545, 5549, 5569, 5581, 5589, 5599, 5663, 5677, 5740;
+		else	setarray .Zodiac, 5744, 5513, 5515, 5546, 5550, 5570, 5582, 5588, 5598, 5662, 5676, 5739;
 	next;
 	mes "[Zodiac of the Month]";
-	mes "Would you like to make 1 ^FF0000"+getitemname (.Zodiac[gettime(6) -1])+"^000000 for the "+gettime(6)+"th Month of this year ?";
+		mes "Would you like to make the Zodiac "+((.@Z==1)?"Diadem":"Crown")+" for the "+gettime(6)+"th Month of this year ?",
+			((is_clientver(0,54))?"<ITEM>"+getitemname(.Zodiac[gettime(6)-1])+"<INFO>"+.Zodiac[gettime(6) -1]+"</INFO></ITEM>":"^FF0000"+getitemname (.Zodiac[gettime(6)-1])+"^000000");
 	next;
 	if(select("Yes:No") == 2) close;
 	switch(gettime(6)){
@@ -40,16 +42,18 @@ prontera,155,181,5	script	Zodiac#hats	4_F_PINKWOMAN,{
 	mes "Awesome! Here you go. You gained ^FF0000"+getitemname(.Zodiac[gettime(6)-1])+"^000000 for this month!";
 	getitem .Zodiac[gettime(6) -1], 1;
 	close;
+
 	function Zodiac {
-		mes "[  ^0000FF Required Items ^000000  ]",
+		mes "[ ^0000FF Required Items ^000000 ]",
 			"^FFFFFF________________________________^000000";
 		for (@i = 0; getarg(.@i, 0); .@i+=2) {
-			mes ((countitem(getarg(.@i)) < getarg(.@i + 1))?"^FF0000":"^0000FF")+"[ "+countitem(getarg(.@i))+" / "+getarg(.@i + 1)+" ] ^0000FF"+getitemname(getarg(.@i))+"^000000";
+			mes ((countitem(getarg(.@i)) < getarg(.@i + 1))?"^FF0000":"^0000FF")+"[ "+countitem(getarg(.@i))+" / "+getarg(.@i + 1)+" ] "+
+				((is_clientver(0,54))?"<ITEM>"+getitemname(getarg(.@i))+"<INFO>"+getarg(.@i)+"</INFO></ITEM>":"^0000FF"+getitemname(getarg(.@i))+"^000000");
 			if(countitem(getarg(.@i)) < getarg(.@i + 1)) .@j++;
 		}
 		mes "^FFFFFF________________________________^000000";
 		if (.@j){
-			mes "[  ^FF0000Await completion for "+.@j+" Items^000000  ]";
+			mes "[ ^FF0000 "+.@j+" More Items For Completion ^000000 ]";
 			close;
 		}
 		next;
