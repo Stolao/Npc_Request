@@ -21,7 +21,7 @@ prontera,155,181,5	script	Zodiac#hats	4_F_PINKWOMAN,{
 	next;
 	mes "[Zodiac of the Month]";
 		mes "Would you like to make the Zodiac "+((.@Z==1)?"Diadem":"Crown")+" for the "+gettime(6)+"th Month of this year ?",
-			((is_clientver(0,54))?"<ITEM>"+getitemname(.Zodiac[gettime(6)-1])+"<INFO>"+.Zodiac[gettime(6) -1]+"</INFO></ITEM>":"^FF0000"+getitemname (.Zodiac[gettime(6)-1])+"^000000");
+			((.Link)?"<ITEM>"+getitemname(.Zodiac[gettime(6)-1])+"<INFO>"+.Zodiac[gettime(6) -1]+"</INFO></ITEM>":"^FF0000"+getitemname (.Zodiac[gettime(6)-1])+"^000000");
 	next;
 	if(select("Yes:No") == 2) close;
 	switch(gettime(6)){
@@ -48,7 +48,7 @@ prontera,155,181,5	script	Zodiac#hats	4_F_PINKWOMAN,{
 			"^FFFFFF________________________________^000000";
 		for (@i = 0; getarg(.@i, 0); .@i+=2) {
 			mes ((countitem(getarg(.@i)) < getarg(.@i + 1))?"^FF0000":"^0000FF")+"[ "+countitem(getarg(.@i))+" / "+getarg(.@i + 1)+" ] "+
-				((is_clientver(0,54))?"<ITEM>"+getitemname(getarg(.@i))+"<INFO>"+getarg(.@i)+"</INFO></ITEM>":"^0000FF"+getitemname(getarg(.@i))+"^000000");
+				((.Link)?"<ITEM>"+getitemname(getarg(.@i))+"<INFO>"+getarg(.@i)+"</INFO></ITEM>":"^0000FF"+getitemname(getarg(.@i))+"^000000");
 			if(countitem(getarg(.@i)) < getarg(.@i + 1)) .@j++;
 		}
 		mes "^FFFFFF________________________________^000000";
@@ -62,4 +62,10 @@ prontera,155,181,5	script	Zodiac#hats	4_F_PINKWOMAN,{
 			delitem getarg(.@i), getarg(.@i + 1);
 		return;
 	}
+OnInit:
+	// Use Item Links?
+	// Toggle
+	//   1 = On
+	//   0 = Off
+	.Link = 1
 }
