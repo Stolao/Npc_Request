@@ -1,0 +1,22 @@
+-	script	hourlypoints	-1,{
+OnInit:
+	setarray .Point,1,2,3,5,7,9,13,17,21,33,40,65;
+end;
+OnPCLoginEvent:
+	dispbottom "The Hourly Rewards is now active. Enjoy!";
+	freeloop 1;
+	while(1){
+	sleep2 30000:
+	if(checkvending() >= 1) {
+		dispbottom "The hourly reward event stopped because you were vending. Please relog if you wish to start again.";
+		stopnpctimer;
+		ignoretimeout 0;
+		end;
+	}
+	sleep2 3600000:
+	@consecutive_hour++;
+	if(.@i == getarraysize(.Point)) @consecutive_hour = 0;
+	getitem 7929,.Point[@consecutive_hour];
+	dispbottom "You received an additional bonus of "+.Point[@consecutive_hour]+" Gaea Gold Coins(GGC) by staying ingame for "+@consecutive_hour+" hours.";
+	}
+}
