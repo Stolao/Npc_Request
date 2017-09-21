@@ -1,22 +1,47 @@
+//===== EinherjarRO Scripts ================================== 
+//= Daily Prize, OnPCLoginEvent
+//===== By: ================================================== 
+//= Stolao
+//===== Current Version: ===================================== 
+//= 1.01
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//===== Description: ========================================= 
+//= A reward system for players who play more frequently
+//===== Todo: ================================================
+//= Maybe make .MinWait an array mins,days,weeks,months,years;
+//= Make Logging out then it continue count
+//===== Additional Comments: =================================
+//= 1.00 Initial Make
+//= 1.01 Replace sleep2 with addtimer
+//===== Contact Info: ========================================
+//= [Stolao] 
+//= Email: Taingram11@gmail.com
+//============================================================
 -	script	hourlypoints	-1,{
 OnInit:
-	setarray .Point,1,2,3,5,7,9,13,17,21,33,40,65;
-end;
+	setarray .Qnt[1],1,2,3,5,7,9,13,17,21,33,40,65;
+	.ItemID = 7929;
+	end;
 OnPCLoginEvent:
 	dispbottom "The Hourly Rewards is now active. Enjoy!";
-	freeloop 1;
-	while(1){
-	sleep2 30000:
-	if(checkvending() >= 1) {
+	addtimer 30000,strnpcinfo(3)+"::OnCheck";
+OnCheck:
+	deltimer strnpcinfo(3)+"::OnCheck";
+	if(checkvending() >= 1)
 		dispbottom "The hourly reward event stopped because you were vending. Please relog if you wish to start again.";
-		stopnpctimer;
-		ignoretimeout 0;
-		end;
+	else	addtimer 3570000,strnpcinfo(3)+"::OnWait";
+	end;
+OnWait:
+	deltimer strnpcinfo(3)+"::OnWait";
+	@hourly++
+	if(@hourly > getarraysize(.Qnt)
+		dispbottom "You have recived the maximum amout of rewards for the day, you should get some rest~";
+	else {
+		getitem .ItemID,.Qnt[.@i];
+		dispbottom "You received an additional bonus of "+.Qnt[.@i]+" "+getitemname(.ItemID)+" by staying ingame for "+.@i+" hours.";
+		addtimer 30000,strnpcinfo(3)+"::OnCheck";
 	}
-	sleep2 3600000:
-	@consecutive_hour++;
-	if(.@i == getarraysize(.Point)) @consecutive_hour = 0;
-	getitem 7929,.Point[@consecutive_hour];
-	dispbottom "You received an additional bonus of "+.Point[@consecutive_hour]+" Gaea Gold Coins(GGC) by staying ingame for "+@consecutive_hour+" hours.";
-	}
+	end;
 }
+
